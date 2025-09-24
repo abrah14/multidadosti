@@ -319,6 +319,17 @@ $suppliers = $request->dadosFornecedores('c');
             App.init(); // initlayout and core plugins
             Index.init();
         });
+
+        // js puro
+        document.querySelectorAll('.more').forEach((item) => {
+            item.addEventListener('click', (event) => {
+                console.log(event);
+                const color = window.getComputedStyle(event.target).backgroundColor;
+                const table = document.querySelector('.portlet-body');
+
+                table.style.backgroundColor = color;
+            });
+        });
     </script>
     <!-- END JAVASCRIPTS -->
 </body>
