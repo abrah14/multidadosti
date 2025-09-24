@@ -1,3 +1,37 @@
+<?php
+
+// pegando a página atual para destacar o menu
+$uri = $_SERVER['REQUEST_URI'];
+$page = explode('/', $uri);
+$page = end($page);
+
+$menu = [
+    'Dashboard' => [
+        'icon' => 'fa fa-home',
+        'link' => 'index.php'
+    ],
+    'Cadastro' => [
+        'icon' => 'fa fa-file-text',
+        'items' => [
+            'Cliente' => '#',
+            'Fornecedor' => '#',
+            'Usuário' => '#',
+            'Produtos' => '#',
+            'Perfil de acesso' => '#'
+        ]
+    ],
+    'Relatório' => [
+        'icon' => 'fa fa-bar-chart-o',
+        'items' => [
+            'Cliente' => '#',
+            'Faturamento' => '#',
+            'Produtos' => '#',
+        ]
+    ]
+];
+
+?>
+
 <div class="page-sidebar-wrapper">
     <div class="page-sidebar navbar-collapse collapse">
         <!-- BEGIN SIDEBAR MENU -->
@@ -21,57 +55,39 @@
                 </form>
                 <!-- END RESPONSIVE QUICK SEARCH FORM -->
             </li>
-            <li class="start active ">
-                <a href="index.php">
-                    <i class="fa fa-home"></i>
-                    <span class="title">
-                        Dashboard
-                    </span>
-                    <span class="selected">
-                    </span>
-                </a>
-            </li>
-            <!--Cliente-->
-            <li class="">
-                <a href="javascript:;">
-                    <i class="fa fa-file-text"></i>
-                    <span class="title">
-                        Cadastro
-                    </span>
-                    <span class="arrow ">
-                    </span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="#">Cliente</a>
+            <?php foreach ($menu as $title => $item) : ?>
+                <?php if (!empty($item['link'])) : ?>
+                    <li class="<?= strstr($page, $item['link']) ? 'start active' : '' ?>">
+                        <a href="<?= $item['link'] ?>">
+                            <i class="<?= $item['icon'] ?>"></i>
+                            <span class="title">
+                                <?= $title ?>
+                            </span>
+                            <span class="selected"></span>
+                        </a>
                     </li>
+                <?php else : ?>
                     <li>
-                        <a href="#">Fornecedor</a>
+                        <a href="javascript:;">
+                            <i class="<?= $item['icon'] ?>"></i>
+                            <span class="title">
+                                <?= $title ?>
+                            </span>
+                            <span class="arrow"></span>
+                        </a>
+                        <?php if (!empty($item['items'])) : ?>
+                            <?php ksort($item['items']) ?>
+                            <ul class="sub-menu">
+                                <?php foreach ($item['items'] as $page_name => $page_link) : ?>
+                                    <li>
+                                        <a href="<?= $page_link ?>"><?= $page_name ?></a>
+                                    </li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endif ?>
                     </li>
-                    <li>
-                        <a href="#">Usuário</a>
-                    </li>
-                </ul>
-            </li>
-            <!--Relatorio-->
-            <li class="">
-                <a href="javascript:;">
-                    <i class="fa fa-bar-chart-o"></i>
-                    <span class="title">
-                        Relatório
-                    </span>
-                    <span class="arrow ">
-                    </span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="#">Cliente</a>
-                    </li>
-                    <li>
-                        <a href="#">Faturamento</a>
-                    </li>
-                </ul>
-            </li>
+                <?php endif ?>
+            <?php endforeach ?>
         </ul>
         <!-- END SIDEBAR MENU -->
     </div>
