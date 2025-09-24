@@ -7,6 +7,30 @@ $customers = $request->dadosClientes('c');
 $users = $request->dadosUsuarios('c');
 $suppliers = $request->dadosFornecedores('c');
 
+#region ajax
+if (!empty($_GET['view'])) {
+    $view = $_GET['view'];
+
+    if ($view == 'customers') {
+        echo json_encode($request->dadosClientes());
+        exit;
+    }
+
+    if ($view == 'users') {
+        echo json_encode($request->dadosUsuarios());
+        exit;
+    }
+
+    if ($view == 'suppliers') {
+        echo json_encode($request->dadosFornecedores());
+        exit;
+    }
+
+    echo json_encode(['error' => 'Parâmetro inválido']);
+    exit;
+}
+#endregion ajax
+
 ?>
 
 <!DOCTYPE html>
@@ -122,7 +146,7 @@ $suppliers = $request->dadosFornecedores('c');
                                     Clientes
                                 </div>
                             </div>
-                            <a class="more" href="#">
+                            <a class="more" href="#" data-view="customers">
                                 Visualizar <i class="m-icon-swapright m-icon-white"></i>
                             </a>
                         </div>
@@ -140,7 +164,7 @@ $suppliers = $request->dadosFornecedores('c');
                                     Usuários
                                 </div>
                             </div>
-                            <a class="more" href="#">
+                            <a class="more" href="#" data-view="users">
                                 Visualizar <i class="m-icon-swapright m-icon-white"></i>
                             </a>
                         </div>
@@ -158,7 +182,7 @@ $suppliers = $request->dadosFornecedores('c');
                                     Fornecedores
                                 </div>
                             </div>
-                            <a class="more" href="#">
+                            <a class="more" href="#" data-view="suppliers">
                                 Visualizar <i class="m-icon-swapright m-icon-white"></i>
                             </a>
                         </div>
@@ -323,11 +347,49 @@ $suppliers = $request->dadosFornecedores('c');
         // js puro
         document.querySelectorAll('.more').forEach((item) => {
             item.addEventListener('click', (event) => {
-                console.log(event);
-                const color = window.getComputedStyle(event.target).backgroundColor;
+                console.log(event.target.dataset);
+                const el = event.target;
+                const color = window.getComputedStyle(el).backgroundColor;
                 const table = document.querySelector('.portlet-body');
 
                 table.style.backgroundColor = color;
+
+                $.ajax({
+                    url: '?view=' + el.dataset.view,
+                    method: 'GET',
+                    dataType: 'json'
+                }).done(function(data) {
+                    if (data.error) {
+                        table.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+                        return;
+                    }
+
+                    let headers = '<tr>';
+                    let rows = '';
+                    let i = 0;
+
+                    data.forEach((row) => {
+                        rows += '<tr>';
+
+                        Object.keys(row).forEach((key) => {
+                            if (i === 0) {
+                                headers += '<th>' + key.charAt(0).toUpperCase() + key.slice(1) + '</th>';
+                            }
+
+                            rows += '<td>' + row[key] + '</td>';
+                        });
+
+                        rows += '</tr>';
+                        i++;
+                    });
+
+                    headers += '</tr>';
+
+                    document.querySelector('.table thead').innerHTML = headers;
+                    document.querySelector('.table tbody').innerHTML = rows;
+                }).fail(function(error) {
+                    console.log(error);
+                });
             });
         });
     </script>
