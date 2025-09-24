@@ -1,3 +1,14 @@
+<?php
+
+require_once 'DataRequest.php';
+
+$request = new DataRequest();
+$customers = $request->dadosClientes('c');
+$users = $request->dadosUsuarios('c');
+$suppliers = $request->dadosFornecedores('c');
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 <!--<![endif]-->
@@ -105,7 +116,7 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    1349
+                                    <?= $customers ?>
                                 </div>
                                 <div class="desc">
                                     Clientes
@@ -123,7 +134,7 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    549
+                                    <?= $users ?>
                                 </div>
                                 <div class="desc">
                                     Usuários
@@ -141,7 +152,7 @@
                             </div>
                             <div class="details">
                                 <div class="number">
-                                    89
+                                    <?= $suppliers ?>
                                 </div>
                                 <div class="desc">
                                     Fornecedores
